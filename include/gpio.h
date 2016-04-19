@@ -75,7 +75,7 @@ typedef struct device_desc {
 } device_desc_t;
 
 /** GPIO device handle */
-typedef void* gpio_device_t;
+typedef void *gpio_device_t;
 
 /**
  * Initializes a gpio driver device for a given range of GPIO

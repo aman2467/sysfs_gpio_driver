@@ -5,7 +5,7 @@
  *
  * This is a project which implements a userspace driver using sysfs interface
  * of the Linux to drive GPIOs.
- * 
+ *
  * It uses /sys/class/gpio/ and provides following APIs for any application
  * to control system and any other Expander GPIOs:
  *
@@ -22,7 +22,7 @@
  * A device named "dev_cpu" can be allocated for system GPIOs, while another
  * device named "dev_i2c_expander" can be allocated which deals with an I2C based
  * GPIO expander device. User can initialize driver multiple times for different
- * devices. User need to initialize driver by calling gpio_sysfs_driver_init() 
+ * devices. User need to initialize driver by calling gpio_sysfs_driver_init()
  * with a proper device descriptor pointed by "desc" as it's argument.
  * The descriptor should hold information about GPIO range, the requested device
  * can work on.

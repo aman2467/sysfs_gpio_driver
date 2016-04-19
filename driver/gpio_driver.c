@@ -74,7 +74,7 @@ typedef struct gpio_driver {
 } gpio_driver_t;
 
 /** counter for devices */
-static int device_count = 0;
+static int device_count;
 gpio_device_t dev_hndlr[MAX_DEVICE];
 
 /***************PRIVATE APIS******************/
@@ -106,19 +106,19 @@ static int export_helper(int gpio, int operation)
 	int rv = GPIO_SUCCESS;
 
 	switch (operation) {
-		case GPIO_EXPORT:
-			fd = open(SYSFS_CLASS_GPIO"export", O_WRONLY);
-			break;
-		case GPIO_UNEXPORT:
-			fd = open(SYSFS_CLASS_GPIO"unexport", O_WRONLY);
-			break;
+	case GPIO_EXPORT:
+		fd = open(SYSFS_CLASS_GPIO"export", O_WRONLY);
+		break;
+	case GPIO_UNEXPORT:
+		fd = open(SYSFS_CLASS_GPIO"unexport", O_WRONLY);
+		break;
 	}
-	if (-1 == fd)
+	if (fd == -1)
 		return GPIO_OPEN_FAIL;
 
 	size = snprintf(buffer, 4, "%d", gpio);
 	size = write(fd, buffer, size);
-	if (0 > size)
+	if (size < 0)
 		rv = GPIO_WRITE_FAIL;
 	close(fd);
 
@@ -143,14 +143,14 @@ static int gpio_sys_set_direction(int gpio, int direction)
 		snprintf(path, MAX_SIZE,
 			 SYSFS_CLASS_GPIO"gpio%d/direction", gpio);
 		fd = open(path, O_WRONLY);
-		if (-1 == fd)
+		if (fd == -1)
 			return GPIO_OPEN_FAIL;
-		if (GPIO_DIRECTION_INPUT == direction)
+		if (direction == GPIO_DIRECTION_INPUT)
 			size = snprintf(buffer, 4, "in");
-		else if (GPIO_DIRECTION_OUTPUT == direction)
+		else if (direction == GPIO_DIRECTION_OUTPUT)
 			size = snprintf(buffer, 4, "out");
 		size = write(fd, buffer, size);
-		if (0 > size) {
+		if (size < 0) {
 			close(fd);
 			return GPIO_WRITE_FAIL;
 		}
@@ -171,10 +171,10 @@ static int gpio_sys_get_direction(int gpio)
 		snprintf(path, MAX_SIZE,
 			 SYSFS_CLASS_GPIO"gpio%d/direction", gpio);
 		fd = open(path, O_RDONLY);
-		if (-1 == fd)
+		if (fd == -1)
 			return GPIO_OPEN_FAIL;
 		size = read(fd, buffer, 4);
-		if (0 > size) {
+		if (size < 0) {
 			close(fd);
 			return GPIO_READ_FAIL;
 		}
@@ -199,16 +199,16 @@ static int gpio_sys_set_value(int gpio, int value)
 
 	snprintf(path, MAX_SIZE, SYSFS_CLASS_GPIO"gpio%d", gpio);
 	if (is_valid_path(path)) {
-		if (GPIO_DIRECTION_INPUT == gpio_sys_get_direction(gpio))
+		if (gpio_sys_get_direction(gpio) == GPIO_DIRECTION_INPUT)
 			return GPIO_SUCCESS;
 		snprintf(path, MAX_SIZE,
 			 SYSFS_CLASS_GPIO"gpio%d/value", gpio);
 		fd = open(path, O_WRONLY);
-		if (-1 == fd)
+		if (fd == -1)
 			return GPIO_OPEN_FAIL;
 		size = snprintf(buffer, 4, "%d", value);
 		size = write(fd, buffer, size);
-		if (0 > size) {
+		if (size < 0) {
 			close(fd);
 			return GPIO_WRITE_FAIL;
 		}
@@ -229,10 +229,10 @@ static int gpio_sys_get_value(int gpio)
 		snprintf(path, MAX_SIZE,
 			 SYSFS_CLASS_GPIO"gpio%d/value", gpio);
 		fd = open(path, O_RDONLY);
-		if (-1 == fd)
+		if (fd == -1)
 			return GPIO_OPEN_FAIL;
 		size = read(fd, buffer, 3);
-		if (0 > size) {
+		if (size < 0) {
 			close(fd);
 			return GPIO_READ_FAIL;
 		}
@@ -284,7 +284,7 @@ gpio_device_t gpio_sysfs_driver_init(device_desc_t *desc)
 		}
 	}
 	dev = malloc(sizeof(gpio_driver_t));
-	if (NULL != dev) {
+	if (dev != NULL) {
 		dev_hndlr[device_count] = (gpio_device_t)dev;
 		dev->id = device_count++;
 		dev->gpio_range.min = desc->range.min;
@@ -297,7 +297,7 @@ gpio_device_t gpio_sysfs_driver_init(device_desc_t *desc)
 
 void gpio_sysfs_driver_destroy(gpio_device_t dev)
 {
-	if (NULL != dev) {
+	if (dev != NULL) {
 		free(dev);
 		if (device_count > 0) {
 			device_count--;
@@ -311,7 +311,7 @@ int gpio_setup(gpio_device_t device, int gpio, int dir)
 	gpio_driver_t *dev = (gpio_driver_t *)device;
 	int rv;
 
-	if (NULL == dev)
+	if (dev == NULL)
 		return GPIO_FAILURE;
 	if (gpio >= dev->gpio_range.min &&
 	    gpio <= dev->gpio_range.max) {
@@ -331,7 +331,7 @@ int gpio_cleanup(gpio_device_t device, int gpio)
 {
 	gpio_driver_t *dev = (gpio_driver_t *)device;
 
-	if (NULL != dev)
+	if (dev != NULL)
 		return dev->gpio->destroy(gpio);
 
 	return GPIO_FAILURE;
@@ -341,7 +341,7 @@ int gpio_set_value(gpio_device_t device, int gpio, int value)
 {
 	gpio_driver_t *dev = (gpio_driver_t *)device;
 
-	if (NULL != dev)
+	if (dev != NULL)
 		return dev->gpio->set_val(gpio, value);
 
 	return GPIO_FAILURE;
@@ -351,7 +351,7 @@ int gpio_get_value(gpio_device_t device, int gpio)
 {
 	gpio_driver_t *dev = (gpio_driver_t *)device;
 
-	if (NULL != dev)
+	if (dev != NULL)
 		return dev->gpio->get_val(gpio);
 
 	return GPIO_VALUE_UNKNOWN;

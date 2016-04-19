@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	}
 	/* Init Driver */
 	dev = gpio_sysfs_driver_init(&desc);
-	if (NULL == dev) {
+	if (dev == NULL) {
 		printf("Device driver init failed\n");
 		return -1;
 	}
