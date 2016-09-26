@@ -38,10 +38,10 @@ driver:
 	@${CC} -c ${CFLAGS} ${DRIVER_DIR}/gpio_driver.c -o ${DRIVER_DIR}/gpio_driver.o
 
 example:
-	@${CC} -c ${CFLAGS} ${EXAMPLE_DIR}/gpio_app.c -o ${EXAMPLE_DIR}/gpio_app.o
+	@${CC} -c ${CFLAGS} ${EXAMPLE_DIR}/gpio_sample_app/gpio_app.c -o ${EXAMPLE_DIR}/gpio_sample_app/gpio_app.o
 
 bin:
-	@${CC} ${EXAMPLE_DIR}/gpio_app.o ${DRIVER_DIR}/gpio_driver.o -o ${BIN_DIR}/gpio_app
+	@${CC} ${EXAMPLE_DIR}/gpio_sample_app/gpio_app.o ${DRIVER_DIR}/gpio_driver.o -o ${BIN_DIR}/gpio_app
 	@echo -e "${GREEN}All Done..!!${NONE}"
 
 doc:
